@@ -196,12 +196,26 @@ async def butonlar(bot:Client, CallbackQuery:CallbackQuery):
                     once = boslukliste[say][:-2]
                     sonra = boslukliste[say][-1:] 
                     boslukliste[say] = once+harf+sonra
+                elif boslukliste[say][3] != "_" and boslukliste[say][-2] != "_" and boslukliste[say][5] == "_":
+                    harf = i[1]
+                    boslukliste[say] = boslukliste[say].replace("_", harf, 1)
+                elif boslukliste[say][3] != "_" and boslukliste[say][-2] != "_" and boslukliste[say][5] != "_":
+                    harf = i[-2]
+                    once = boslukliste[say][:-4]
+                    sonra = boslukliste[say][-3:] 
+                    boslukliste[say] = once+harf+sonra
+                elif boslukliste[say][3] != "_" and boslukliste[say][-2] != "_" and boslukliste[say][5] != "_" and boslukliste[say][7] == "_":
+                    print("ben")
+                    harf = i[2]
+                    boslukliste[say] = boslukliste[say].replace("_", harf, 1)
+                boslukliste[say][7]
                 say += 1
             newtable = "\n".join(boslukliste)
             gonderilecek = f"{baslik}\n{newtable}"
             kullanıcılar[chat_id]["tablo"] = gonderilecek
             await CallbackQuery.edit_message_text(f"{baslik}\n{newtable}", reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton(text="İpucu 🔏", callback_data="ipucu")]]))
         except Exception as e:
+            print(e)
             if e.args[0] == chat_id:
                 await bot.answer_callback_query(callback_id,  text="Aktif bir oyun bulunmuyor!", show_alert=True)
             else:
