@@ -7,6 +7,7 @@ import asyncio
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 import json
 
+bosluk_simge = "▪️"
 
 bot = Client(
     "bulmaca_bot",
@@ -30,7 +31,7 @@ def tablo_oluştur(dictionary:dict):
     random.shuffle(liste)
     txt = dictionary["baslik"] + "\n"
     for i in enumerate(liste, 1):
-        txt += f"{i[0]}. "+len(i[1])*"_ "+"\n"
+        txt += f"{i[0]}. "+len(i[1])*bosluk_simge+"\n"
     return txt, liste
 
 dicts = [biyoloji, tarih, cografya, tarkan]
@@ -46,7 +47,7 @@ async def oyun(bot:Client, message:Message):
     kullanıcılar.update({chat_id:{"msg_id":msg.id, "liste":liste, "tablo":tablo, "say":0, "zaman":int(t0)}})
 
 
-@bot.on_message(filters.text)
+@bot.on_message(filters.text, group=3)
 async def sorgulama(bot:Client, message:Message):
     text = (message.text).lower()
     chat_id = message.chat.id
@@ -172,7 +173,7 @@ async def zamansorgucusu():
         await asyncio.sleep(0.7)
 
 
-@bot.on_callback_query()
+@bot.on_callback_query(group=-1)
 async def butonlar(bot:Client, CallbackQuery:CallbackQuery):
     data = CallbackQuery.data
     chat_id = CallbackQuery.message.chat.id
@@ -186,29 +187,28 @@ async def butonlar(bot:Client, CallbackQuery:CallbackQuery):
             tablo = kullanıcılar[chat_id]["tablo"]
             boslukliste = tablo.split("\n")
             baslik = boslukliste.pop(0)
+            harf = ""
+
+            toplamyildizsayisi = 0
             say = 0
-            for i in liste:
-                if boslukliste[say][3] == "_":
-                    harf = i[0]
-                    boslukliste[say] = boslukliste[say].replace("_", harf, 1)
-                elif boslukliste[say][3] != "_" and boslukliste[say][-2] == "_":
-                    harf = i[-1]
-                    once = boslukliste[say][:-2]
-                    sonra = boslukliste[say][-1:] 
-                    boslukliste[say] = once+harf+sonra
-                elif boslukliste[say][3] != "_" and boslukliste[say][-2] != "_" and boslukliste[say][5] == "_":
-                    harf = i[1]
-                    boslukliste[say] = boslukliste[say].replace("_", harf, 1)
-                elif boslukliste[say][3] != "_" and boslukliste[say][-2] != "_" and boslukliste[say][5] != "_" and boslukliste[say][-4] == "_":
-                    harf = i[-2]
-                    once = boslukliste[say][:-4]
-                    sonra = boslukliste[say][-3:] 
-                    boslukliste[say] = once+harf+sonra
-                elif boslukliste[say][3] != "_" and boslukliste[say][-2] != "_" and boslukliste[say][5] != "_" and boslukliste[say][-4] != "_" and boslukliste[say][7] == "_":
-                    print("ben")
-                    harf = i[2]
-                    boslukliste[say] = boslukliste[say].replace("_", harf, 1)
-                boslukliste[say][7]
+            for i in boslukliste:
+                if i == '':
+                    break
+                boslukluindexnumber = boslukliste.index(i)
+                tekkelime = liste[boslukluindexnumber]
+                yildizsay = 0
+                for j in i:
+                    if j == bosluk_simge:
+                        yildizsay += 1
+                    else:
+                        pass
+                toplamyildizsayisi += yildizsay
+                try:
+                    yildizindexnumber = i.index(bosluk_simge)-3
+                    harf = tekkelime[yildizindexnumber]
+                    boslukliste[say] = boslukliste[say].replace(bosluk_simge, harf, 1)
+                except:
+                    pass                
                 say += 1
             newtable = "\n".join(boslukliste)
             gonderilecek = f"{baslik}\n{newtable}"
