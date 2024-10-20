@@ -11,9 +11,9 @@ bosluk_simge = "▪️"
 
 bot = Client(
     "bulmaca_bot",
-    api_id = 27924368,
-    api_hash = "78dcc9a9d25d1386b508d37774b93f47",
-    bot_token="5440371886:AAHfa9NE0EggD48BQy8XwdacWWJvllp6lFY"
+    api_id = ,
+    api_hash = "",
+    bot_token=""
 )
 
 @bot.on_message(filters.command("start"))
